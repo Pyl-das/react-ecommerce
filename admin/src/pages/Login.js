@@ -1,4 +1,5 @@
-import React from 'react'
+import React from 'react';
+import { Link } from "react-router-dom";
 
 const Login = () => {
   return (
@@ -28,7 +29,7 @@ const Login = () => {
           </form>
         </div>
         <div className="card-footer text-center py-3">
-          <div className="small"><a href="register.html">Need an account? Sign up!</a></div>
+          <div className="small"><Link to="/registration">Need an account? Sign up!</Link></div>
         </div>
       </div>
     </div>
