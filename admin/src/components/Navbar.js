@@ -1,6 +1,38 @@
-import React from 'react'
+import React, { useState, useEffect, useCallback } from 'react';
+import { useDispatch, useSelector } from "react-redux";
+import { Navigate, useNavigate } from "react-router-dom";
+import { logout } from "../slices/auth";
+import EventBus from "../common/EventBus";
 
 const Navbar = () => {
+  let navigate = useNavigate();
+  const [showAdminBoard, setShowAdminBoard] = useState(false);
+  const { user: currentUser } = useSelector((state) => state.auth);
+  const { isLoggedIn } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
+  const logOut = useCallback(() => {
+    dispatch(logout());
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (currentUser) {
+      setShowAdminBoard('admin');
+    } else {
+      setShowAdminBoard(false);
+    }
+
+    EventBus.on("logout", () => {
+      logOut();
+    });
+
+    return () => {
+      EventBus.remove("logout");
+    };
+  }, [currentUser, logOut]);
+  
+  if (!isLoggedIn) {
+    return <Navigate to="/login" />;
+  }
   return (
     <nav className="sb-topnav navbar navbar-expand navbar-dark bg-dark">
     {/* Navbar Brand*/}
@@ -22,7 +54,7 @@ const Navbar = () => {
           <li><a className="dropdown-item" href="#!">Settings</a></li>
           <li><a className="dropdown-item" href="#!">Activity Log</a></li>
           <li><hr className="dropdown-divider" /></li>
-          <li><a className="dropdown-item" href="#!">Logout</a></li>
+          <li><a className="dropdown-item" href="/login" onClick={logOut}>Logout</a></li>
         </ul>
       </li>
     </ul>
